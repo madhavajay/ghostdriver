@@ -1,20 +1,4 @@
-# HELP NEEDED
-I have been away from this project for 2+ years. Family and change or more intense and demanding work, made it impossible to maintain this properly.
-
-Lots has changed: PhantomJS is now 2.x and lots of this code should be revised, tested and validated to work with latest PhantomJS **whilst** conforming to latest WebDriver specs.
-All of this requires a big effort and commitment that I can't make.
-
-I have been merging some obviously good PR, but not testing them: I have to assume that submitters did it!.
-
-__GhostDriver__ needs a proper maintainer. Someone that can prove she/he can understand this codebase and bring it forward. There are many MANY things that need to be done to make this project survive.
-
-**Are you out there?**
-
----
-
-### Alternatives
-
-If you need a better maintained WebDriver implementation, and write your code in Java, why not checkout [Machine Publishers' jBrowserDriver](https://github.com/MachinePublishers/jBrowserDriver/)? Tell [Dan Hollingsworth](https://github.com/hollingsworthd) I sent you.
+this is my ghostdriver fork.  have fun!
 
 ---
 
@@ -46,8 +30,24 @@ IRC channel: [#phantomjs-ghostdriver](http://webchat.freenode.net/?channels=%23p
 * Download latest stable PhantomJS from [here](http://phantomjs.org/download.html)
 * Selenium version `">= 2.33.0`"
 
-**THAT'S IT!!** Because of latest stable GhostDriver being embedded in PhantomJS,
-you shouldn't need anything else to get started.
+the current version of ghostdriver in phantomjs is 2 years old.  the following will setup the current version.
+
+1. checkout ghostdriver
+
+	```sh
+	$ git clone https://github.com/jesg/ghostdriver ~/.ghostdriver
+	```
+2. add `bin/ghostdriver` to your `$PATH`
+	```sh
+	echo 'export PATH="$HOME/.ghostdriver/bin:$PATH"; export PHANTOMJS_GHOSTDRIVER_PATH="~/.ghostdriver/src/main.js";' >> ~/.bash_profile
+	```
+    **Ubuntu Desktop note**: Modify your `~/.bashrc` instead of `~/.bash_profile`.
+
+    **Zsh note**: Modify your `~/.zshrc` file instead of `~/.bash_profile`.
+3. set `PHANTOMJS_PATH` to the phantomjs executable
+3. run ghostdriver `phantomjs --webdriver=8910`
+
+the ghostdriver bash script is a drop in replacement for phantomjs.
 
 ## Register GhostDriver with a Selenium Grid hub
 
@@ -65,69 +65,7 @@ under the same name within the [Selenium project](http://docs.seleniumhq.org/doc
 
 ### Include Java Bindings in your Maven project
 
-For versions >= 1.2.0, add the following to your `pom.xml`:
-
-```xml
-<dependency>
-    <groupId>com.github.detro</groupId>
-    <artifactId>phantomjsdriver</artifactId>
-    <version>1.2.0</version>
-</dependency>
-```
-
-For versions < 1.2.0, add the following to your `pom.xml`:
-
-```xml
-<dependency>
-    <groupId>com.github.detro.ghostdriver</groupId>
-    <artifactId>phantomjsdriver</artifactId>
-    <version>1.1.0</version>
-</dependency>
-```
-
-### Include Java Bindings in your Gradle project
-
-Just add the following to your `build.gradle`:
-
-```gradle
-dependencies {
-    ...
-    testCompile "com.github.detro.ghostdriver:phantomjsdriver:LATEST_VERSION_HERE"
-    ...
-}
-```
-
-### Search Maven
-For other options on how to include the PhantomJSDriver dependency into your project, click [here](http://search.maven.org/#search%7Cga%7C1%7Ccom.github.detro.ghostdriver).
-
-### Alternative: how to use it via `RemoteWebDriver`
-
-Launching PhantomJS in Remote WebDriver mode it's simple:
-```bash
-$ phantomjs --webdriver=PORT
-```
-Once started, you can use any `RemoteWebDriver` implementation to send commands to it. I advice to take a look to the
-`/test` directory for examples.
-
-## F.A.Q.
-
-### What extra WebDriver `capabilities` GhostDriver offers?
-* GhostDriver extra Capabilities
-    * `phantomjs.page.settings.SETTING = VALUE` - Configure `page.settings`
-    on PhantomJS internal page objects (_windows_ in WebDriver context)
-    (see [reference](http://phantomjs.org/api/webpage/property/settings.html))
-    * `phantomjs.page.customHeaders.HEADER = VALUE` - Add extra HTTP Headers
-    when loading a URL
-    (see [reference](http://phantomjs.org/api/webpage/property/custom-headers.html))
-* PhantomJSDriver (Java-binding) Capabilities
-    * `phantomjs.binary.path` - Specify path to PhantomJS executable to use
-    * `phantomjs.ghostdriver.path` - Specify path to GhostDriver `main/src.js`
-    script to use; allows to use a different version of GhostDriver then the one
-    embed in PhantomJS
-    * `phantomjs.cli.args` - Specify command line arguments to pass to the
-    PhantomJS executable
-    * `phantomjs.ghostdriver.cli.args` - Specify command line argument to pass to
-    GhostDriver (works only in tandem with `phantomjs.ghostdriver.path`)
+the [codeborne](https://github.com/codeborne/ghostdriver) maintains a build for the java driver.
 
 ## Want to help? Read on!
 
