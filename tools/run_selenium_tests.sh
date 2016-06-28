@@ -56,7 +56,7 @@ ln -s $ATOMS_BUILD_DIR $TEMP_ATOMS_BUILD_DIR_SYMLINK
 # 2. Build the JS Fragments
 pushd $SELENIUM_REPO_PATH
 # Run tests
-./go -v //java/client/test/org/openqa/selenium/phantomjs:test:run haltonfailure=false
+PATH=../bin:$PATH ./go -v //java/client/test/org/openqa/selenium/phantomjs:test:run haltonfailure=false
 
 echo "Test Results in: " $SELENIUM_REPO_PATH/build/test_logs
 popd
