@@ -165,17 +165,17 @@ public class CookieTest extends BaseTestWithServer {
 
         Cookie[] cookies = getCookies();
         assertEquals(2, cookies.length);
-        assertEquals("test", cookies[0].getName());
-        assertEquals("newValue", cookies[0].getValue());
-        assertEquals(".localhost", cookies[0].getDomain());
-        assertEquals("/", cookies[0].getPath());
-        assertEquals(false, cookies[0].isSecure());
-
-        assertEquals("test2", cookies[1].getName());
-        assertEquals("test2", cookies[1].getValue());
+        assertEquals("test", cookies[1].getName());
+        assertEquals("newValue", cookies[1].getValue());
         assertEquals(".localhost", cookies[1].getDomain());
         assertEquals("/", cookies[1].getPath());
         assertEquals(false, cookies[1].isSecure());
+
+        assertEquals("test2", cookies[0].getName());
+        assertEquals("test2", cookies[0].getValue());
+        assertEquals(".localhost", cookies[0].getDomain());
+        assertEquals("/", cookies[0].getPath());
+        assertEquals(false, cookies[0].isSecure());
     }
 
     @Test
