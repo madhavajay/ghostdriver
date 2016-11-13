@@ -254,7 +254,8 @@ ghostdriver.WebElementReqHand = function(idOrElement, session) {
             typeRes,
             text,
             fsModule = require("fs"),
-            abortCallback = false;
+            abortCallback = false,
+            multiFileText;
 
         // Ensure all required parameters are available
         if (typeof(postObj) === "object" && typeof(postObj.value) === "object") {
@@ -265,18 +266,34 @@ ghostdriver.WebElementReqHand = function(idOrElement, session) {
             if (_getTagName(currWindow).toLowerCase() === "input" &&
                 _getAttribute(currWindow, "type").toLowerCase() === "file") {
 
+
+                if (_getAttribute(currWindow, "multiple")) {
+                    // split files by \n like chromedriver
+                    multiFileText = text.split("\n");
+
+                    // abort if file does not exist
+                    for (var i = 0; i < multiFileText.length; ++i) {
+                        if (!fsModule.exists(multiFileText[i])) {
+                            _log.debug("File does not exist: " + multiFileText[i]);
+                            res.respondBasedOnResult(_session, req, JSON.stringify({status: 0, value: null}));
+                            return;
+                        }
+                    }
+
+                    // this indirectly clicks on the head element
+                    // hack to workaround phantomjs uploadFile api which requires a selector
+                    currWindow.uploadFile("head", multiFileText);
+
+                    // Click on the element!
+                    typeRes = currWindow.evaluate(require("./webdriver_atoms.js").get("click"), _getJSON());
+                    res.respondBasedOnResult(_session, req, typeRes);
+                    return;
+                }
+
                 // abort if file does not exist
                 if (!fsModule.exists(text)) {
                     _log.debug("File does not exist: " + text);
                     res.respondBasedOnResult(_session, req, JSON.stringify({status: 0, value: null}));
-                    return;
-                }
-
-                // multiple-file upload is not supported
-                if (_getAttribute(currWindow, "multiple")) {
-                    const msg = "multiple-file upload is not supported";
-                    _log.error(msg);
-                    _errors.handleFailedCommandEH(_errors.FAILED_CMD_STATUS_CODES.UnknownError, msg, req, res, session);
                     return;
                 }
 
