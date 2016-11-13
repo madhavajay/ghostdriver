@@ -39,6 +39,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.WebDriverException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,6 +47,7 @@ import java.io.*;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class FileUploadTest extends BaseTestWithServer {
@@ -167,5 +169,28 @@ public class FileUploadTest extends BaseTestWithServer {
         d.findElement(By.id("id-name1")).click();
 
         assertEquals("changed", result.getText());
+     }
+
+    @Test
+    public void checkThrowUnsupportedErrorOnMultipleFileUpload() throws IOException {
+        WebDriver d = getDriver();
+
+        d.get(server.getBaseUrl() + "/common/formPage.html");
+        WebElement uploadElement = d.findElement(By.id("multiple_upload"));
+        WebElement result = d.findElement(By.id("fileResults"));
+        assertEquals("", result.getText());
+
+        File file = File.createTempFile("test", "txt");
+        file.deleteOnExit();
+
+        try {
+            uploadElement.sendKeys(file.getAbsolutePath());
+            fail("sending keys to a multiple-file upload should fail");
+        } catch (WebDriverException e) {
+        }
+        // Shift focus to something else because send key doesn't make the focus leave
+        d.findElement(By.id("id-name1")).click();
+
+        assertNotEquals("changed", result.getText());
      }
 }
