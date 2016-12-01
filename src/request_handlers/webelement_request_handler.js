@@ -275,7 +275,7 @@ ghostdriver.WebElementReqHand = function(idOrElement, session) {
                     for (var i = 0; i < multiFileText.length; ++i) {
                         if (!fsModule.exists(multiFileText[i])) {
                             _log.debug("File does not exist: " + multiFileText[i]);
-                            res.respondBasedOnResult(_session, req, JSON.stringify({status: 0, value: null}));
+                            res.success(_session.getId());
                             return;
                         }
                     }
@@ -293,7 +293,7 @@ ghostdriver.WebElementReqHand = function(idOrElement, session) {
                 // abort if file does not exist
                 if (!fsModule.exists(text)) {
                     _log.debug("File does not exist: " + text);
-                    res.respondBasedOnResult(_session, req, JSON.stringify({status: 0, value: null}));
+                     res.success(_session.getId());
                     return;
                 }
 
