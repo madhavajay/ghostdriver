@@ -44,8 +44,7 @@ the current version of ghostdriver in phantomjs is 2 years old.  the following w
     **Ubuntu Desktop note**: Modify your `~/.bashrc` instead of `~/.bash_profile`.
 
     **Zsh note**: Modify your `~/.zshrc` file instead of `~/.bash_profile`.
-3. set `PHANTOMJS_PATH` to the phantomjs executable
-3. run ghostdriver `phantomjs --webdriver=8910`
+3. run ghostdriver `ghostdriver --webdriver=8910`
 
 the ghostdriver bash script is a drop in replacement for phantomjs.
 
