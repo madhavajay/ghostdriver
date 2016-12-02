@@ -56,6 +56,8 @@ for arg in "$@"; do
       parse_url $arg;;
     -w*)
       parse_url $arg;;
+    --version)
+      exec $phantomjs_path --version;;
     *)        set -- "$@" "$arg"
   esac
 done
