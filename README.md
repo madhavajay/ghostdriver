@@ -9,28 +9,23 @@ Ghost Driver is a pure JavaScript implementation of the
 for [PhantomJS](http://phantomjs.org/).
 It's a Remote WebDriver that uses PhantomJS as back-end.
 
-**GhostDriver is designed to be integral part of PhantomJS itself, but it's developed in isolation and progress is tracked
-by this Repository.**
-
-* Current _GhostDriver_ stable version:
-see [releases](https://github.com/detro/ghostdriver/releases)
-* Current _PhantomJS-integrated_ version is `"1.1.0"`:
-contained in PhantomJS `"1.9.7"`
-* Current _PhantomJSDriver Java bindings_ stable version: see
-[Maven](https://oss.sonatype.org/index.html#nexus-search;quick~phantomjsdriver)
-
-For more info, please take a look at the [changelog](https://github.com/detro/ghostdriver/blob/master/CHANGELOG.md).
-
-The project was created and is lead by [Ivan De Marino](https://github.com/detro).
-
-IRC channel: [#phantomjs-ghostdriver](http://webchat.freenode.net/?channels=%23phantomjs-ghostdriver).
-
 ## Setup
 
 * Download latest stable PhantomJS from [here](http://phantomjs.org/download.html)
 * Selenium version `">= 2.33.0`"
+* ghostdriver requires phantomjs >= 2.1.1
 
 the current version of ghostdriver in phantomjs is 2 years old.  the following will setup the current version.
+
+### Install from npm
+
+```
+npm install --global --no-optional ghostdriver
+```
+
+[phantomjs-prebuilt](https://github.com/Medium/phantomjs) is provided as an optional dependency.
+
+### Install from Source
 
 1. checkout ghostdriver
 
@@ -54,26 +49,6 @@ the ghostdriver bash script is a drop in replacement for phantomjs.
 2. Register with the hub: `phantomjs --webdriver=8080 --webdriver-selenium-grid-hub=http://127.0.0.1:4444`
 3. Now you can use your normal webdriver client with `http://127.0.0.1:4444` and just request `browserName: phantomjs`
 
-## (Java) Bindings
-
-This project provides WebDriver bindings for Java under the name _PhantomJSDriver_.
-[Here is the JavaDoc](https://cdn.rawgit.com/detro/ghostdriver/master/binding/java/docs/javadoc/index.html).
-
-Bindings for other languages (C#, Python, Ruby, ...) are developed and maintained
-under the same name within the [Selenium project](http://docs.seleniumhq.org/docs/) itself.
-
-### Include Java Bindings in your Maven project
-
-the [codeborne](https://github.com/codeborne/ghostdriver) maintains a build for the java driver.
-
-## Want to help? Read on!
-
-GhostDriver pushed the evolution of PhantomJS from the start. All the features required by PhantomJS to fit GhostDriver were designed to still feel "consistent" and "at home" with PhantomJS alone.
-
-To drive that effort, I worked on a [PhantomJS fork](https://github.com/detro/phantomjs-ghostdriver), and then
-pushed changes to PhantomJS master once agreed with the rest of the team on the changes.
-
-If you are planning to contribute, that is the PhantomJS you should use.
 
 ### Run validation tests
 
@@ -90,36 +65,6 @@ to run them (I tested it with Java 7, but should work with Java 6 too).
 1. `phantomjs --webdriver=PORT`
 2. Configure `driver` inside `ghostdriver/test/config.ini` to point at the URL `http://localhost:PORT`
 3. `cd ghostdriver/test/java; ./gradlew test`
-
-### Project Directory Structure
-
-Here follows the output of the `tree -hd -L 3` command, trimmed of files and "build directories":
-
-```bash
-.
-├── [ 102]  binding
-│   └── [ 510]  java
-│       ├── [ 204]  build
-│       ├── [ 136]  gradle
-│       ├── [ 884]  jars            <--- JARs containing Binding, related Source and related JavaDoc
-│       └── [ 102]  src             <--- Java Binding Source
-├── [ 442]  src                     <--- GhostDriver JavaScript core source
-│   ├── [ 306]  request_handlers    <--- JavaScript "classes/functions" that handle HTTP Requests
-│   └── [ 204]  third_party         <--- Third party/utility code
-│       └── [2.0K]  webdriver-atoms <--- WebDriver Atoms, automatically imported from the Selenium project
-├── [ 204]  test
-│   ├── [ 476]  java                <--- Java Tests
-│   │   ├── [ 136]  gradle
-│   │   ├── [ 136]  out
-│   │   └── [ 102]  src
-│   ├── [ 238]  python              <--- Python Tests
-│   │   └── [ 102]  utils
-│   └── [ 340]  testcase-issue_240
-└── [ 238]  tools                   <--- Tools (import/export)
-    └── [ 136]  atoms_build_dir
-
-20 directories
-```
 
 ### WebDriver Atoms
 
