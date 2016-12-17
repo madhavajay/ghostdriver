@@ -28,14 +28,18 @@ var phantomjs_path;
 if ('PHANTOMJS_BINARY_PATH' in process.env) {
     phantomjs_path = process.env['PHANTOMJS_BINARY_PATH']
 } else {
-    var phantomjs = require('phantomjs-prebuilt')
-
-    // search for the root of the phantomjs-prebuilt package
-    var phantomjs_prebuilt_path = phantomjs.path
-    while(phantomjs_prebuilt_path && path.basename(phantomjs_prebuilt_path) !== 'phantomjs-prebuilt') {
-        phantomjs_prebuilt_path = path.join(phantomjs_prebuilt_path, '..')
+    try {
+        var phantomjs = require('phantomjs-prebuilt')
+        // search for the root of the phantomjs-prebuilt package
+        var phantomjs_prebuilt_path = phantomjs.path
+        while(phantomjs_prebuilt_path && path.basename(phantomjs_prebuilt_path) !== 'phantomjs-prebuilt') {
+            phantomjs_prebuilt_path = path.join(phantomjs_prebuilt_path, '..')
+        }
+        phantomjs_path = path.join(phantomjs_prebuilt_path,'lib','phantom','bin','phantomjs')
+    } catch (err) {
+        phantomjs_path = 'phantomjs';
     }
-    phantomjs_path = path.join(phantomjs_prebuilt_path,'lib','phantom','bin','phantomjs')
+
 }
 
 
