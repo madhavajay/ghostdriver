@@ -10,6 +10,7 @@
     "url": "git+https://github.com/jesg/ghostdriver.git"
   },
   "keywords": [
+    "selenium",
     "ghostdriver",
     "phantomjs",
     "webkit",
