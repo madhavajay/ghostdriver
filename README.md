@@ -19,11 +19,15 @@ the current version of ghostdriver in phantomjs is 2 years old.  the following w
 
 ### Install from npm
 
+to install **with** the `phantomjs-prebuilt` package.
+```
+npm install --global ghostdriver
+```
+
+to install **without** the `phantomjs-prebuilt` package.
 ```
 npm install --global --no-optional ghostdriver
 ```
-
-[phantomjs-prebuilt](https://github.com/Medium/phantomjs) is provided as an optional dependency.
 
 ### Install from Source
 
@@ -32,14 +36,14 @@ npm install --global --no-optional ghostdriver
 	```sh
 	$ git clone https://github.com/jesg/ghostdriver ~/.ghostdriver
 	```
-2. add `bin/ghostdriver` to your `$PATH`
+2. add `bin/ghostdriver.pl` to your `$PATH`
 	```sh
-	echo 'export PATH="$HOME/.ghostdriver/bin:$PATH"; export PHANTOMJS_GHOSTDRIVER_PATH="~/.ghostdriver/src/main.js";' >> ~/.bash_profile
+	echo 'export PATH="$HOME/.ghostdriver/bin:$PATH";' >> ~/.bash_profile
 	```
     **Ubuntu Desktop note**: Modify your `~/.bashrc` instead of `~/.bash_profile`.
 
     **Zsh note**: Modify your `~/.zshrc` file instead of `~/.bash_profile`.
-3. run ghostdriver `ghostdriver --webdriver=8910`
+3. run ghostdriver `ghostdriver.pl --webdriver=8910`
 
 the ghostdriver bash script is a drop in replacement for phantomjs.
 
