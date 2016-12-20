@@ -25,7 +25,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 License
 
-# phantomjs_ghostdriver_path=${../src/main.js:-PHANTOMJS_GHOSTDRIVER_PATH}
+phantomjs_ghostdriver_path=$PHANTOMJS_GHOSTDRIVER_PATH
 phantomjs_path=${PHANTOMJS_PATH:-phantomjs}
 ip='127.0.0.1'
 port='8910'
@@ -66,9 +66,4 @@ set -- "$@" "--ip=$ip";
 set -- "$@" "--port=$port";
 
 
-echo "transformed arguments: ../src/main.js $@"
-
-exec $phantomjs_path ../src/main.js $@
-#echo "transformed arguments: $phantomjs_ghostdriver_path $@"
-#
-#exec $phantomjs_path $phantomjs_ghostdriver_path $@
+exec $phantomjs_path $phantomjs_ghostdriver_path $@
