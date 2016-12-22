@@ -194,7 +194,8 @@ ghostdriver.Session = function(desiredCapabilities) {
         var args = Array.prototype.splice.call(arguments, 0),
             thisPage = this,
             onLoadFinishedArgs = null,
-            onErrorArgs = null;
+            onErrorArgs = null,
+            detectLoadStartLatch = false;
 
         // Normalize "execTypeOpt" value
         if (typeof(execTypeOpt) === "undefined" ||
@@ -206,7 +207,14 @@ ghostdriver.Session = function(desiredCapabilities) {
         this.setOneShotCallback("onLoadFinished", function (status) {
             _log.debug("_execFuncAndWaitForLoadDecorator", "onLoadFinished: " + status);
 
+            detectLoadStartLatch = false;
             onLoadFinishedArgs = Array.prototype.slice.call(arguments);
+        });
+
+        // Register Callbacks to grab any async event we are interested in
+        this.setOneShotCallback("onLoadStarted", function () {
+            _log.debug("_execFuncAndWaitForLoadDecorator", "onLoadStarted: wait for onLoadFinished");
+            detectLoadStartLatch = true;
         });
 
         // Execute "code"
@@ -230,13 +238,15 @@ ghostdriver.Session = function(desiredCapabilities) {
                 checkLoadingFinished;
 
             checkLoadingFinished = function() {
-                if (!_isLoading()) {               //< page finished loading
+                if (!_isLoading() && !detectLoadStartLatch) {               //< page finished loading
                     _log.debug("_execFuncAndWaitForLoadDecorator", "Page Loading in Session: false");
 
                     if (onLoadFinishedArgs !== null) {
+                        _log.debug("_execFuncAndWaitForLoadDecorator", "Handle Load Finish Event");
                         // Report the result of the "Load Finished" event
                         onLoadFunc.apply(thisPage, onLoadFinishedArgs);
                     } else {
+                        _log.debug("_execFuncAndWaitForLoadDecorator", "No Load Finish Event Detected");
                         // No page load was caused: just report "success"
                         onLoadFunc.call(thisPage, "success");
                     }
@@ -501,13 +511,14 @@ ghostdriver.Session = function(desiredCapabilities) {
         var wHandle;
 
         for (wHandle in _windows) {
-            if (_windows[wHandle].loading) {
+            if (_windows[wHandle].loadingProgress < 100) {
                 return true;
             }
         }
 
-        // If we arrived here, means that no window is loading
-        return false;
+        return !_getCurrentWindow().evaluate(function() {
+            return window.document.readyState === "complete";
+        });
     },
 
     /**

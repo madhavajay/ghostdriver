@@ -327,23 +327,38 @@ ghostdriver.WebElementReqHand = function(idOrElement, session) {
                 typeRes = currWindow.evaluate(require("./webdriver_atoms.js").get("type"), _getJSON(), "");
                 typeRes = JSON.parse(typeRes);
                 if (typeRes && typeRes.status !== 0) {
+                    abortCallback = true;           //< handling the error here
                     res.respondBasedOnResult(_session, req, typeRes);
                     return;
                 }
 
-                // Send keys to the page, using Native Events
-                _session.inputs.sendKeys(_session, text);
+                currWindow.execFuncAndWaitForLoad(function() {
 
-                // Only clear the modifier keys if this was called using element.sendKeys().
-                // Calling this from the Advanced Interactions API doesn't clear the modifier keys.
-                if (req.urlParsed.file === _const.VALUE) {
-                    _session.inputs.clearModifierKeys(_session);
-                }
+                        // Send keys to the page, using Native Events
+                        _session.inputs.sendKeys(_session, text);
 
-                currWindow.waitIfLoading(function() {
-                    // Return the result of this typing
-                    res.respondBasedOnResult(_session, req, typeRes);
-                });
+                        // Only clear the modifier keys if this was called using element.sendKeys().
+                        // Calling this from the Advanced Interactions API doesn't clear the modifier keys.
+                        if (req.urlParsed.file === _const.VALUE) {
+                            _session.inputs.clearModifierKeys(_session);
+                        }
+                    },
+                    function(status) {                   //< onLoadFinished
+                        // Report Load Finished, only if callbacks were not "aborted"
+                        if (!abortCallback) {
+                            res.success(_session.getId());
+                        }
+                    },
+                    function(errMsg) {
+                        var errCode = errMsg === "timeout"
+                            ? _errors.FAILED_CMD_STATUS_CODES.Timeout
+                            : _errors.FAILED_CMD_STATUS_CODES.UnknownError;
+
+                        // Report Load Error, only if callbacks were not "aborted"
+                        if (!abortCallback) {
+                            _errors.handleFailedCommandEH(errCode, "Pageload initiated by click failed. Cause: " + errMsg, req, res, _session);
+                        }
+                    });
             }
             return;
         }
