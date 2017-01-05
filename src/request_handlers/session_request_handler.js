@@ -784,9 +784,35 @@ ghostdriver.SessionReqHand = function(session) {
         }
 
         if (postObj.cookie) {
+
+            // set default values
+            if (!postObj.cookie.path) {
+                postObj.cookie.path = "/";
+            }
+
+            if (!postObj.cookie.secure) {
+                postObj.cookie.secure = false;
+            }
+
+            if (!postObj.cookie.domain) {
+                postObj.cookie.domain = require("./third_party/parseuri.js").parse(currWindow.url).host;
+            }
+
+            if (postObj.cookie.hasOwnProperty('httpOnly')) {
+                postObj.cookie.httponly = postObj.cookie.httpOnly;
+                delete postObj.cookie['httpOnly'];
+            } else {
+                postObj.cookie.httponly = false;
+            }
+
             // JavaScript deals with Timestamps in "milliseconds since epoch": normalize!
             if (postObj.cookie.expiry) {
                 postObj.cookie.expiry *= 1000;
+            }
+
+            if (!postObj.cookie.expiry) {
+                // 24*60*60*365*20*1000 = 630720000 number of milliseconds in 20 years
+                postObj.cookie.expiry = Date.now() + 630720000000;
             }
 
             // If the cookie is expired OR if it was successfully added
