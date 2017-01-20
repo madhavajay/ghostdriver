@@ -462,16 +462,17 @@ ghostdriver.WebElementReqHand = function(idOrElement, session) {
             abortCallback = false;
 
         // Clicking on Current Element can cause a page load, hence we need to wait for it to happen
-        currWindow.execFuncAndWaitForLoad(function() {
-                // do the click
-                clickRes = currWindow.evaluate(require("./webdriver_atoms.js").get("click"), _getJSON());
-
-                // If Click was NOT positive, status will be set to something else than '0'
-                clickRes = JSON.parse(clickRes);
-                if (clickRes && clickRes.status !== 0) {
+            currWindow.execFuncAndWaitForLoad(function() {
+                var rect = currWindow.evaluate(require("./webdriver_atoms.js").get("execute_script"),"return arguments[0].getBoundingClientRect();", [_getJSON()]);
+                var rect = rect.value;
+                var coord = {x: ((rect.left+rect.right)/2), y: ((rect.top + rect.bottom)/2)}
+                var interactableRes = currWindow.evaluate(require("./webdriver_atoms.js").get("is_displayed"), _getJSON());
+                interactableRes = JSON.parse(interactableRes);
+                if (interactableRes && interactableRes.status !== 0) {
                     abortCallback = true;           //< handling the error here
-                    res.respondBasedOnResult(_session, req, clickRes);
+                    res.respondBasedOnResult(_session, req, interactableRes);
                 }
+                currWindow.sendEvent("click", coord.x, coord.y, "left");
             },
             function(status) {                   //< onLoadFinished
                 // Report Load Finished, only if callbacks were not "aborted"
