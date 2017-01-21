@@ -463,9 +463,22 @@ ghostdriver.WebElementReqHand = function(idOrElement, session) {
 
         // Clicking on Current Element can cause a page load, hence we need to wait for it to happen
             currWindow.execFuncAndWaitForLoad(function() {
+                var rect = currWindow.evaluate(require("./webdriver_atoms.js").get("scroll_into_view"),_getJSON());
+                var offset = currWindow.evaluate(require("./webdriver_atoms.js").get("execute_script"),
+                "var win = window, offset = {top: 0, left: 0}, style, frect, rect = arguments[0].getBoundingClientRect(),win2=window;" +
+                "while (win.frameElement) {" +
+                "frect = win.frameElement.getClientRects()[0];" +
+                "style = win.getComputedStyle(win.frameElement);" +
+                "win = win.parent;" +
+                "offset.top += frect.top + parseInt(style.getPropertyValue('padding-top'), 10);" +
+                "offset.left += frect.left + parseInt(style.getPropertyValue('padding-left'), 10);" +
+                "}" +
+                "return offset;"
+                    , [_getJSON()]);
+                offset = offset.value;
                 var rect = currWindow.evaluate(require("./webdriver_atoms.js").get("execute_script"),"return arguments[0].getBoundingClientRect();", [_getJSON()]);
-                var rect = rect.value;
-                var coord = {x: ((rect.left+rect.right)/2), y: ((rect.top + rect.bottom)/2)}
+                rect = rect.value;
+                var coord = {x: (offset.left+((rect.left+rect.right)/2)), y: (offset.top +((rect.top + rect.bottom)/2))};
                 var interactableRes = currWindow.evaluate(require("./webdriver_atoms.js").get("is_displayed"), _getJSON());
                 interactableRes = JSON.parse(interactableRes);
                 if (interactableRes && interactableRes.status !== 0) {
