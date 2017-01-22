@@ -77,8 +77,7 @@ import static org.openqa.selenium.remote.http.HttpMethod.POST;
  * It's a separate project that, at every stable release, is merged into PhantomJS.
  * If interested in developing (contributing to) GhostDriver, it's possible to run PhantomJS and pass GhostDriver as
  * a script.
- * <p/>
- * NOTE: The design of this class is heavily inspired by {@link org.openqa.selenium.chrome.ChromeDriver}.
+ *
  *
  * @author Ivan De Marino <http://ivandemarino.me>
  * @see PhantomJSDriverService#createDefaultService()

@@ -47,8 +47,7 @@ import static com.google.common.base.Preconditions.*;
 /**
  * Service that controls the life-cycle of a PhantomJS in Remote WebDriver mode.
  * The Remote WebDriver is implemented via GhostDriver.
- * <p/>
- * NOTE: Yes, the design of this class is heavily inspired by {@link org.openqa.selenium.chrome.ChromeDriverService}.
+ *
  *
  * @author Ivan De Marino <http://ivandemarino.me>
  */
@@ -544,4 +543,5 @@ public class PhantomJSDriverService extends DriverService {
             return false;
         }
     }
+}
 }
