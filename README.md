@@ -12,7 +12,7 @@ It's a Remote WebDriver that uses PhantomJS as back-end.
 ## Setup
 
 * Download latest stable PhantomJS from [here](http://phantomjs.org/download.html)
-* Selenium version `">= 2.33.0`"
+* Selenium version `>= 3.0.0`
 * ghostdriver requires phantomjs >= 2.1.1
 
 the current version of ghostdriver in phantomjs is 2 years old.  the following will setup the current version.
