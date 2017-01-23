@@ -47,9 +47,9 @@ compileJava {
 
 ext.seleniumVersion         = "3.0.0"
 project.archivesBaseName    = project.name
-project.version             = "$seleniumVersion-SNAPSHOT"
+project.version             = "$seleniumVersion-beta1"
 
-ext.projectGroupId          = "com.github.detro"
+ext.projectGroupId          = "com.github.jesg"
 ext.projectArtifactId       = "phantomjsdriver"
 ext.projectLongName         = "PhantomJS Driver (GhostDriver)"
 ext.projectArtefactDir      = "jars/"
@@ -177,13 +177,13 @@ uploadArchives {
                 artifactId      projectArtifactId
                 version         project.version
                 packaging       "jar"
-                url             "https://github.com/detro/ghostdriver"
+                url             "https://github.com/jesg/ghostdriver"
                 inceptionYear   "2012"
 
                 scm {
-                    url                     "https://github.com/detro/ghostdriver"
-                    connection              "scm:git:git@github.com:detro/ghostdriver.git"
-                    developerConnection     "scm:git:git@github.com:detro/ghostdriver.git"
+                    url                     "https://github.com/jesg/ghostdriver"
+                    connection              "scm:git:git@github.com:jesg/ghostdriver.git"
+                    developerConnection     "scm:git:git@github.com:jesg/ghostdriver.git"
                 }
 
                 licenses {
@@ -204,6 +204,16 @@ uploadArchives {
                             role    "Developer"
                         }
                         timezone    "GMT"
+                    }
+                    developer {
+                        id          "jesg"
+                        name        "Jason Gowan"
+                        email       "gowanjason@gmail.com"
+                        url         "https://github.com/jesg"
+                        roles {
+                            role    "Developer"
+                        }
+                        timezone    "America/Los_Angeles"
                     }
                 }
             }
