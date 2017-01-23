@@ -50,28 +50,28 @@ import static org.openqa.selenium.remote.http.HttpMethod.POST;
  * A {@link org.openqa.selenium.WebDriver} implementation that controls a PhantomJS running in Remote WebDriver mode.
  * This class is provided as a convenience for easily testing PhantomJS.
  * The control server which each instance communicates with will live and die with the instance.
- * <p/>
+ * <br>
  * The Driver requires to optionally set some Capabilities or Environment Variables:
  * <ul>
  * <li>{@link PhantomJSDriverService#PHANTOMJS_EXECUTABLE_PATH_PROPERTY}</li>
  * <li>{@link PhantomJSDriverService#PHANTOMJS_GHOSTDRIVER_PATH_PROPERTY}</li>
  * </ul>
- * <p/>
+ * <br>
  * {@link PhantomJSDriverService#PHANTOMJS_EXECUTABLE_PATH_PROPERTY} is required only if the executable
  * {@code phantomjs} is not available through the {@code $PATH} environment variable:
  * you can provide it either via the {@link Capabilities} construction parameter object,
  * or via {@link System} Property.
- * <p/>
+ * <br>
  * {@link PhantomJSDriverService#PHANTOMJS_GHOSTDRIVER_PATH_PROPERTY} is optional in case you want to use a specific
  * version of GhostDriver (i.e. during development of GhostDriver).
  * You can provide it either via the {@link Capabilities} construction parameter object,
  * or via {@link System} Property.
- * <p/>
+ * <br>
  * Instead, if you have a PhantomJS WebDriver process already running, you can instead use {@link
  * RemoteWebDriver#RemoteWebDriver(java.net.URL, org.openqa.selenium.Capabilities)} to delegate the
  * execution of your WebDriver/Selenium scripts to it. Of course, in that case you will than be in
  * charge to control the life-cycle of the PhantomJS process.
- * <p/>
+ * <br>
  * NOTE: PhantomJS Remote WebDriver mode is implemented via
  * <a href="https://github.com/detro/ghostdriver">GhostDriver</a>.
  * It's a separate project that, at every stable release, is merged into PhantomJS.
@@ -79,7 +79,7 @@ import static org.openqa.selenium.remote.http.HttpMethod.POST;
  * a script.
  *
  *
- * @author Ivan De Marino <http://ivandemarino.me>
+ * @author Ivan De Marino http://ivandemarino.me
  * @see PhantomJSDriverService#createDefaultService()
  */
 public class PhantomJSDriver extends RemoteWebDriver implements TakesScreenshot {
@@ -141,16 +141,16 @@ public class PhantomJSDriver extends RemoteWebDriver implements TakesScreenshot 
     /**
      * Execute a PhantomJS fragment.  Provides extra functionality not found in WebDriver
      * but available in PhantomJS.
-     * <p/>
-     * See the <a href="http://phantomjs.org/api/">PhantomJS API<</a>
+     * <br>
+     * See the <a href="http://phantomjs.org/api/">PhantomJS API</a>
      * for details on what is available.
-     * <p/>
+     * <br>
      * A 'page' variable pointing to currently selected page is available for use.
      * If there is no page yet, one is created.
-     * <p/>
+     * <br>
      * When overriding any callbacks be sure to wrap in a try/catch block, as failures
      * may cause future WebDriver calls to fail.
-     * <p/>
+     * <br>
      * Certain callbacks are used by GhostDriver (the PhantomJS WebDriver implementation)
      * already.  Overriding these may cause the script to fail.  It's a good idea to check
      * for existing callbacks before overriding.

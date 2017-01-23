@@ -49,7 +49,7 @@ import static com.google.common.base.Preconditions.*;
  * The Remote WebDriver is implemented via GhostDriver.
  *
  *
- * @author Ivan De Marino <http://ivandemarino.me>
+ * @author Ivan De Marino http://ivandemarino.me
  */
 public class PhantomJSDriverService extends DriverService {
 
@@ -89,7 +89,7 @@ public class PhantomJSDriverService extends DriverService {
      * {@code new String[] { "--logFile=PATH", "--logLevel=DEBUG" }}.
      * </p>
      *
-     * <p>
+     * <br>
      * Acceptable arguments:
      * <ul>
      *     <li>{@code --ip=IP_GHOSTDRIVER_SHOULD_LISTEN_ON}</li>
@@ -99,21 +99,20 @@ public class PhantomJSDriverService extends DriverService {
      *     <li>{@code --logLevel=(INFO|DEBUG|WARN|ERROR)}</li>
      *     <li>{@code --logColor=(false|true)}</li>
      * </ul>
-     * </p>
      */
     public static final String PHANTOMJS_GHOSTDRIVER_CLI_ARGS = "phantomjs.ghostdriver.cli.args";
 
     /**
      * Set capabilities with this prefix to apply it to the PhantomJS {@code page.settings.*} object.
      * Every PhantomJS WebPage Setting can be used.
-     * See <a href="http://phantomjs.org/api/webpage/property/settings.html">PhantomJS docs/a>.
+     * See <a href="http://phantomjs.org/api/webpage/property/settings.html">PhantomJS docs</a>.
      */
     public static final String PHANTOMJS_PAGE_SETTINGS_PREFIX = "phantomjs.page.settings.";
 
     /**
      * Set capabilities with this prefix to apply it to the PhantomJS {@code page.customHeaders.*} object.
      * Any header can be used.
-     * See <a href="http://phantomjs.org/api/webpage/property/custom-headers.html">PhantomJS docs/a>.
+     * See <a href="http://phantomjs.org/api/webpage/property/custom-headers.html">PhantomJS docs</a>.
      */
     public static final String PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX = "phantomjs.page.customHeaders.";
 
@@ -154,7 +153,9 @@ public class PhantomJSDriverService extends DriverService {
 
     /**
      * Configures and returns a new {@link PhantomJSDriverService} using the default configuration.
-     * <p/>
+     *
+     *
+     * <br>
      * In this configuration, the service will use the PhantomJS executable identified by the the
      * following capability, system property or PATH environment variables:
      * <ul>
@@ -164,8 +165,10 @@ public class PhantomJSDriverService extends DriverService {
      *          (Optional - without will use GhostDriver internal to PhantomJS)
      *      </li>
      * </ul>
-     * <p/>
+     * <br>
      * Each service created by this method will be configured to find and use a free port on the current system.
+     * <br>
+     * @param desiredCapabilities desired capabilities
      *
      * @return A new ChromeDriverService using the default configuration.
      */
@@ -197,7 +200,7 @@ public class PhantomJSDriverService extends DriverService {
 
     /**
      * Same as {@link PhantomJSDriverService#createDefaultService(org.openqa.selenium.Capabilities)}.
-     * <p/>
+     * <br>
      * In this case PhantomJS or GhostDriver can't be searched within the Capabilities, only System
      * Properties.
      *
@@ -210,7 +213,7 @@ public class PhantomJSDriverService extends DriverService {
     /**
      * Looks into the Capabilities, the current $PATH and the System Properties for
      * {@link PhantomJSDriverService#PHANTOMJS_EXECUTABLE_PATH_PROPERTY}.
-     * <p/>
+     * <br>
      * NOTE: If the Capability, the $PATH and the System Property are set, the Capability takes
      * priority over the System Property, that in turn takes priority over the $PATH.
      *
@@ -247,10 +250,10 @@ public class PhantomJSDriverService extends DriverService {
 
     /**
      * Find the GhostDriver main file (i.e. {@code "main.js"}).
-     * <p/>
+     * <br>
      * Looks into the Capabilities and the System Properties for
      * {@link PhantomJSDriverService#PHANTOMJS_GHOSTDRIVER_PATH_PROPERTY}.
-     * <p/>
+     * <br>
      * NOTE: If both the Capability and the System Property are set, the Capability takes priority.
      *
      * @param desiredCapabilities Capabilities in which we will look for the path to GhostDriver
@@ -398,7 +401,7 @@ public class PhantomJSDriverService extends DriverService {
 
         /**
          * Configures the service to use a specific Proxy configuration.
-         * <p/>
+         * <br>
          * NOTE: Usually the proxy configuration is passed to the Remote WebDriver via WireProtocol
          * Capabilities. PhantomJS doesn't yet support protocol configuration at runtime: it
          * requires it to be defined on launch.
@@ -543,5 +546,4 @@ public class PhantomJSDriverService extends DriverService {
             return false;
         }
     }
-}
 }
