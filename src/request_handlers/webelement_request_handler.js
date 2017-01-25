@@ -164,11 +164,19 @@ ghostdriver.WebElementReqHand = function(idOrElement, session) {
         res.respondBasedOnResult(_session, req, locationRes);
     },
 
+    // must be scrolled into view
     _getLocationInViewResult = function (req) {
-        return _protoParent.getSessionCurrWindow.call(this, _session, req).evaluate(
-            require("./webdriver_atoms.js").get("execute_script"),
-            "return (" + require("./webdriver_atoms.js").get("get_location_in_view") + ")(arguments[0]);",
-            [_getJSON()]);
+        var currWindow = _protoParent.getSessionCurrWindow.call(this, _session, req),
+            frameOffset = _session.getFrameOffset(currWindow),
+            locationRes = _getLocationResult(req);
+
+        if(locationRes && locationRes.status !== 0) {
+            return locationRes;
+        }
+
+        locationRes.value.x += frameOffset.left;
+        locationRes.value.y += frameOffset.top;
+        return locationRes;
     },
 
     _getLocationInView = function (req) {
@@ -218,6 +226,49 @@ ghostdriver.WebElementReqHand = function(idOrElement, session) {
         res.respondBasedOnResult(_session, req, sizeRes);
     },
 
+
+    // coordinates for native click events
+    _getPosition = function(req) {
+        var currWindow = _protoParent.getSessionCurrWindow.call(this, _session, req),
+            locationRes = _getLocationInViewResult(req),
+            sizeRes = JSON.parse(_getSizeResult(req)),
+            coord;
+
+        if(locationRes && locationRes.status !== 0) {
+            return locationRes;
+        }
+
+        if(sizeRes && sizeRes.status !== 0) {
+            return sizeRes;
+        }
+
+        return {status: 0,
+            x: (locationRes.value.x + sizeRes.value.width/2),
+            y: (locationRes.value.y + sizeRes.value.height/2)};
+    },
+
+    _nativeClick = function(req) {
+        var currWindow = _protoParent.getSessionCurrWindow.call(this, _session, req),
+        coords;
+
+        currWindow.evaluate(require("./webdriver_atoms.js").get("scroll_into_view"),_getJSON());
+
+        var interactableRes = currWindow.evaluate(require("./webdriver_atoms.js").get("is_displayed"), _getJSON());
+        interactableRes = JSON.parse(interactableRes);
+        if (interactableRes && interactableRes.status !== 0) {
+            return interactableRes;
+        }
+
+        coords = _getPosition();
+        if (coords && coords.status !== 0) {
+            return coords;
+        }
+        currWindow.sendEvent("click", coords.x, coords.y, "left");
+        _log.debug("Click at: " + JSON.stringify(coords));
+
+        return {status: 0, value: null};
+    },
+
     _normalizeSpecialChars = function(str) {
         var resultStr = "",
             i, ilen;
@@ -253,7 +304,9 @@ ghostdriver.WebElementReqHand = function(idOrElement, session) {
             currWindow = _protoParent.getSessionCurrWindow.call(this, _session, req),
             typeRes,
             text,
-            fsModule = require("fs");
+            fsModule = require("fs"),
+            abortCallback = false,
+            multiFileText;
 
         // Ensure all required parameters are available
         if (typeof(postObj) === "object" && typeof(postObj.value) === "object") {
@@ -262,20 +315,29 @@ ghostdriver.WebElementReqHand = function(idOrElement, session) {
 
             // Detect if it's an Input File type (that requires special behaviour), and the File actually exists
             if (_getTagName(currWindow).toLowerCase() === "input" &&
-                _getAttribute(currWindow, "type").toLowerCase() === "file" &&
-                fsModule.exists(text)) {
-                // Register a one-shot-callback to fill the file picker once invoked by clicking on the element
-                currWindow.setOneShotCallback("onFilePicker", function(oldFile) {
-                    // Send the response as soon as we are done setting the value in the "input[type=file]" element
-                    setTimeout(function() {
-                        res.respondBasedOnResult(_session, req, typeRes);
-                    }, 1);
+                _getAttribute(currWindow, "type").toLowerCase() === "file") {
 
-                    return text;
-                });
+                // split files by \n like chromedriver
+                multiFileText = text.split("\n");
+
+                // abort if file does not exist
+                for (var i = 0; i < multiFileText.length; ++i) {
+                    if (!fsModule.exists(multiFileText[i])) {
+                        _log.debug("File does not exist: " + multiFileText[i]);
+                        res.success(_session.getId());
+                        return;
+                    }
+                }
+
+                // this indirectly clicks on the head element
+                // hack to workaround phantomjs uploadFile api which requires a selector
+                currWindow.uploadFile("head", multiFileText);
 
                 // Click on the element!
-                typeRes = currWindow.evaluate(require("./webdriver_atoms.js").get("click"), _getJSON());
+                typeRes = _nativeClick();
+                res.respondBasedOnResult(_session, req, typeRes);
+                return;
+
             } else {
                 // Normalize for special characters
                 text = _normalizeSpecialChars(text);
@@ -283,20 +345,40 @@ ghostdriver.WebElementReqHand = function(idOrElement, session) {
                 // Execute the "type" atom on an empty string only to force focus to the element.
                 // TODO: This is a hack that needs to be corrected with a proper method to set focus.
                 typeRes = currWindow.evaluate(require("./webdriver_atoms.js").get("type"), _getJSON(), "");
-
-                // Send keys to the page, using Native Events
-                _session.inputs.sendKeys(_session, text);
-
-                // Only clear the modifier keys if this was called using element.sendKeys().
-                // Calling this from the Advanced Interactions API doesn't clear the modifier keys.
-                if (req.urlParsed.file === _const.VALUE) {
-                    _session.inputs.clearModifierKeys(_session);
+                typeRes = JSON.parse(typeRes);
+                if (typeRes && typeRes.status !== 0) {
+                    abortCallback = true;           //< handling the error here
+                    res.respondBasedOnResult(_session, req, typeRes);
+                    return;
                 }
 
-                currWindow.waitIfLoading(function() {
-                    // Return the result of this typing
-                    res.respondBasedOnResult(_session, req, typeRes);
-                });
+                currWindow.execFuncAndWaitForLoad(function() {
+
+                        // Send keys to the page, using Native Events
+                        _session.inputs.sendKeys(_session, text);
+
+                        // Only clear the modifier keys if this was called using element.sendKeys().
+                        // Calling this from the Advanced Interactions API doesn't clear the modifier keys.
+                        if (req.urlParsed.file === _const.VALUE) {
+                            _session.inputs.clearModifierKeys(_session);
+                        }
+                    },
+                    function(status) {                   //< onLoadFinished
+                        // Report Load Finished, only if callbacks were not "aborted"
+                        if (!abortCallback) {
+                            res.success(_session.getId());
+                        }
+                    },
+                    function(errMsg) {
+                        var errCode = errMsg === "timeout"
+                            ? _errors.FAILED_CMD_STATUS_CODES.Timeout
+                            : _errors.FAILED_CMD_STATUS_CODES.UnknownError;
+
+                        // Report Load Error, only if callbacks were not "aborted"
+                        if (!abortCallback) {
+                            _errors.handleFailedCommandEH(errCode, "Pageload initiated by click failed. Cause: " + errMsg, req, res, _session);
+                        }
+                    });
             }
             return;
         }
